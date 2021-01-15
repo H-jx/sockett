@@ -1,0 +1,7 @@
+.github/
+coverage/
+__test__/
+test*
+example/
+node_modules/
+.DS_Store

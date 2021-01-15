@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,    
+        "declaration": true,
+        "target": "es5",                     
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "lib":["es2018"],                
+        "outDir": "./lib",   
+        "baseUrl": ".",
+        "paths": {
+        },
+        "skipLibCheck": true
+    },
+    "exclude": [
+        "lib",
+        "node_modules"
+    ]
+}

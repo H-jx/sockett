@@ -1,20 +1,6 @@
-<div align="center">
-  <img src="https://github.com/lukeed/sockette/raw/master/sockette.jpg" alt="Sockette" height="250" />
-</div>
 
-<h1 align="center">Sockette</h1>
+<h1 align="center">Sockett</h1>
 
-<div align="center">
-  <a href="https://npmjs.org/package/sockette">
-    <img src="https://badgen.now.sh/npm/v/sockette" alt="version" />
-  </a>
-  <a href="https://github.com/lukeed/sockette/actions?query=workflow:CI+branch:master">
-    <img src="https://github.com/lukeed/sockette/workflows/CI/badge.svg?event=push&query=workflow:CI+branch:master" alt="CI" />
-  </a>
-  <a href="https://npmjs.org/package/sockette">
-    <img src="https://badgen.now.sh/npm/dm/sockette" alt="downloads" />
-  </a>
-</div>
 
 <div align="center">The cutest little WebSocket wrapper! 🧦</div>
 
@@ -30,26 +16,27 @@ You have direct access to the (current) underlying `WebSocket` within every `Eve
 ## Install
 
 ```
-$ npm install --save sockette
+$ npm install --save sockett
 ```
 
 
 ## Usage
 
 Unlike `WebSocket`, you should declare all event listeners on initialization:
-```js
-const Sockette = require('sockette');
+```ts
+import Sockett from 'sockett';
 
 const ws = new Sockette('ws://localhost:3000', {
   timeout: 5e3,
   maxAttempts: 10,
-  onopen: e => console.log('Connected!', e),
-  onmessage: e => console.log('Received:', e),
-  onreconnect: e => console.log('Reconnecting...', e),
-  onmaximum: e => console.log('Stop Attempting!', e),
-  onclose: e => console.log('Closed!', e),
-  onerror: e => console.log('Error:', e)
 });
+
+ws.on('open', e => console.log('Connected!', e));
+ws.on("message", e => console.log('Received:', e));
+ws.on("reconnect", e => console.log('Reconnecting...', e));
+ws.on("maximum" , e => console.log('Stop Attempting!', e));
+ws.on('close', e => console.log('Closed!', e));
+ws.on('error', e => console.log('Error:', e));
 
 ws.send('Hello, world!');
 ws.json({type: 'ping'});
@@ -62,7 +49,7 @@ setTimeout(ws.reconnect, 10e3);
 
 ## API
 
-### Sockette(url, options)
+### Sockett(url, options)
 
 Returns: `Sockette`
 
@@ -90,53 +77,9 @@ Default: `Infinity`
 
 The maximum number of attempts to reconnect.
 
-> **Important:** Pass `-1` if you want to disable this feature. Although, this is main reason to use Sockette! :joy:
-
-#### options.onopen
-Type: `Function`
-
-The `EventListener` to run in response to `'open'` events. It receives the `Event` object as its only parameter.
-
-> This is called when the connection has been established and is ready to send and receive data.
-
-> **Important:** Sockette will forget the number of previous reconnection attempts, so that the next time connection is lost, you will consistently retry `n` number of times, as determined by `options.maxAttempts`.
-
-#### options.onmessage
-Type: `Function`
-
-The `EventListener` to run in response to `'message'` events. It receives the `Event` object as its only parameter.
-
-> This is called when a message has been received from the server. You'll probably want `event.data`!
-
-#### options.onreconnect
-Type: `Function`
-
-The callback to run when attempting to reconnect to the server.
-
-If Sockette is automatically reconnecting in response to an `error` or unexpected `close` event, then your `onreconnect` callback will receive the forwarded `Event` object.
-
-#### options.onmaximum
-Type: `Function`
-
-The callback to run when the [`maxAttempts`](o#ptionsmaxattempts) limit has been met.
-
-This callback will receive the forwarded `Event` object from `onclose`.
-
-#### options.onclose
-Type: `Function`
-
-The `EventListener` to run in response to `'close'` events. It receives the `Event` object as its only parameter.
-
 > This is called when the connection has been closed for any reason.
 
 > **Important:** If the `event.code` is _not_ `1000`, `1001`, or `1005` an automatic reconnect attempt will be queued.
-
-#### options.onerror
-Type: `Function`
-
-The `EventListener` to run in response to `'error'` events. It receives the `Event` object as its only parameter.
-
-> This is called anytime an error occurs.
 
 > **Important:** If the `event.code` is `ECONNREFUSED`, an automatic reconnect attempt will be queued.
 
