@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc --build tsconfig.json",
-    "publish:patch": "npm version patch && jnpm publish"
+    "publish:patch": "npm version patch && npm publish"
   },
   "author": "hubo36",
   "license": "ISC",
