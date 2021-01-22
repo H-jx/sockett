@@ -105,7 +105,7 @@ export class Sockett extends EventEmitter {
 
     public send = (message: any) => {
         // opening
-        if (this.wss.readyState === 0) {
+        if (this.wss.readyState === this.wss.CONNECTING && !this.messageCache.includes(message)) {
             this.messageCache.push(message);
             return;
         }
