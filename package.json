@@ -3,6 +3,10 @@
   "version": "1.0.3",
   "description": " The cutest little WebSocket wrapper!",
   "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/H-jx/sockett.git"
+  },
   "scripts": {
     "build": "tsc --build tsconfig.json",
     "publish:patch": "npm version patch && npm publish"

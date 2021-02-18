@@ -26,7 +26,7 @@ Unlike `WebSocket`, you should declare all event listeners on initialization:
 ```ts
 import Sockett from 'sockett';
 
-const ws = new Sockette('ws://localhost:3000', {
+const ws = new Sockett('ws://localhost:3000', {
   timeout: 5e3,
   maxAttempts: 10,
 });
