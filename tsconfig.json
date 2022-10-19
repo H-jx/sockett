@@ -7,7 +7,7 @@
         "target": "es6",                     
         "module": "CommonJS",
         "moduleResolution": "node",
-        "lib":["es2018"],                
+        "lib":["es2018", "DOM"],                
         "outDir": "./lib",   
         "baseUrl": ".",
         "paths": {

@@ -6,8 +6,13 @@ export interface SockettOptions extends WebSocketServer.ClientOptions {
     timeout?: number;
     maxAttempts?: number;
 }
-interface EventMap {
-    open: (ev: Event) => WebSocket;
+export interface EventsMap {
+    [event: symbol | string]: (...args: any) => void
+}
+export type EventNames<Map> = keyof Map & (string | symbol)
+
+export interface DefaultEventsMap extends EventsMap{
+    open: (ev: Event) => void;
     message: (ev: MessageEvent) => void;
     reconnect: (ev: ErrorEvent) => void;
     maximum: (ev: CloseEvent) => void;
@@ -20,7 +25,7 @@ const defaultOptions = {
     timeout: 1e3
 };
 
-export class Sockett extends EventEmitter {
+export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
     public wss!: WebSocket;
     public num: number;
     public timer: NodeJS.Timeout | number;
@@ -45,18 +50,18 @@ export class Sockett extends EventEmitter {
     /**
      * @override
      */
-    public emit = <T extends keyof EventMap>(
-        event: T,
-        ...arg: Parameters<EventMap[T]>
+    public emit = <E extends EventNames<UserEventMap & DefaultEventsMap>>(
+        event: E,
+        ...arg: Parameters<DefaultEventsMap[E] | UserEventMap[E]>
     ) => {
         return super.emit(event, arg);
     };
     /**
      * @override
      */
-    public on = <E extends keyof EventMap>(
+    public on = <E extends EventNames<UserEventMap & DefaultEventsMap>>(
         event: E,
-        listener: (...arg: Parameters<EventMap[E]>) => void
+        listener: (...arg: Parameters<UserEventMap[E]>) => void
     ) => {
         return super.on(event, listener);
     };
@@ -127,7 +132,7 @@ export class Sockett extends EventEmitter {
         if (!this.isOpen()) {
             return;
         }
-        clearTimeout(this.timer);
+        clearTimeout(this.timer as number);
         this.timer = -1;
         this.wss.close(code, reason);
     };
