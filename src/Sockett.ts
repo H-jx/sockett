@@ -6,10 +6,10 @@ export interface SockettOptions extends WebSocketServer.ClientOptions {
     timeout?: number;
     maxAttempts?: number;
 }
-export interface EventsMap {
-    [event: symbol | string]: (...args: any) => void
-}
-export type EventNames<Map> = keyof Map & (string | symbol)
+
+export type EventsMap = Record<(string | symbol), (...args: any[]) => void>
+
+export type EventNames<Map> = keyof Map
 
 export interface DefaultEventsMap extends EventsMap{
     open: (ev: Event) => void;
@@ -22,7 +22,7 @@ export interface DefaultEventsMap extends EventsMap{
 
 const CLOSE_CODE = 1e3;
 const defaultOptions = {
-    timeout: 1e3
+    timeout: 3e3
 };
 
 export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
@@ -52,18 +52,18 @@ export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
      */
     public emit = <E extends EventNames<UserEventMap & DefaultEventsMap>>(
         event: E,
-        ...arg: Parameters<DefaultEventsMap[E] | UserEventMap[E]>
+        ...arg: Parameters<UserEventMap[keyof UserEventMap]> | Parameters<DefaultEventsMap[keyof DefaultEventsMap]>
     ) => {
-        return super.emit(event, arg);
+        return super.emit(event as 'string | symbol', arg);
     };
     /**
      * @override
      */
     public on = <E extends EventNames<UserEventMap & DefaultEventsMap>>(
         event: E,
-        listener: (...arg: Parameters<UserEventMap[E]>) => void
+        listener: (...arg: Parameters<UserEventMap[keyof UserEventMap]> | Parameters<DefaultEventsMap[keyof DefaultEventsMap]>) => void
     ) => {
-        return super.on(event, listener);
+        return super.on(event as 'string | symbol', listener);
     };
     public open = () => {
         if ('WebSocket' in window) {
@@ -85,7 +85,7 @@ export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
         };
 
         this.wss.onclose = e => {
-            if (e.code === CLOSE_CODE || e.code === 1001 || e.code === 1005) {
+            if (e.code === CLOSE_CODE || e.code === 1001 || e.code === 1005 || e.code === 1006) {
                 this.reconnect(e);
             }
             this.emit("close", e);
