@@ -1,6 +1,6 @@
 {
   "name": "sockett",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": " The cutest little WebSocket wrapper!",
   "main": "lib/index.js",
   "repository": {
