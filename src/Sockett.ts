@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import WebSocketServer from "ws";
+import WebSocketServer, { ErrorEvent } from "ws";
 
 export interface SockettOptions extends WebSocketServer.ClientOptions {
     protocols?: string | string[];
@@ -66,7 +66,7 @@ export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
         return super.on(event as 'string | symbol', listener);
     };
     public open = () => {
-        if ('WebSocket' in window) {
+        if (typeof window !== undefined) {
             this.wss = new WebSocket(this.url, this.opts.protocols || []);
         } else {
             this.wss = new WebSocketServer(this.url, this.opts.protocols || [], this.opts) as any;
@@ -94,7 +94,7 @@ export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
         this.wss.onerror = e => {
             e && e.type === "ECONNREFUSED"
                 ? this.reconnect(e)
-                : this.emit("error", e as ErrorEvent);
+                : this.emit("error", e as any);
         };
     };
 
@@ -137,6 +137,6 @@ export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
         this.wss.close(code, reason);
     };
     public isOpen() {
-        return this.wss && this.wss.readyState === (WebSocket || WebSocketServer).OPEN;
+        return this.wss && this.wss.readyState === this.wss.OPEN;
     }
 }
