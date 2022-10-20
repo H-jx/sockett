@@ -54,7 +54,7 @@ export class Sockett<UserEventMap extends EventsMap> extends EventEmitter {
         event: E,
         ...arg: Parameters<UserEventMap[keyof UserEventMap]> | Parameters<DefaultEventsMap[keyof DefaultEventsMap]>
     ) => {
-        return super.emit(event as 'string | symbol', arg);
+        return super.emit(event as 'string | symbol', ...arg);
     };
     /**
      * @override
